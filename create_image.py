@@ -43,7 +43,7 @@ def validate_paths(img_paths: List[str]) -> None:
             sys.exit(constants.INVALID_PATHS_PROVIDED)
 
 
-def create_polaroid_images(img_paths: List[str]) -> None:
+def create_polaroid_images(img_paths: List[str], no_border: bool) -> None:
     """Iterates over the given file/directory path(s) and attempts to generate
     polaroid images
 
@@ -54,17 +54,17 @@ def create_polaroid_images(img_paths: List[str]) -> None:
         img_path = Path(path)
         if img_path.is_file():
             if constants.SUFFIX not in str(img_path):
-                generate_new_image(img_path)
+                generate_new_image(img_path, no_border)
         elif img_path.is_dir():
             files = [f for f in img_path.iterdir() if Path(f).is_file()]
             for fpath in files:
                 if constants.SUFFIX not in str(fpath):
-                    generate_new_image(fpath)
+                    generate_new_image(fpath, no_border)
         else:
             sys.exit(constants.INVALID_PATHS_PROVIDED)
 
 
-def generate_new_image(path: Path) -> None:
+def generate_new_image(path: Path, no_border: bool) -> None:
     """Generates a new polaroid-esque image of the provided image and saves the
     file in the same location as the original. The original file is preserved.
 
@@ -81,8 +81,10 @@ def generate_new_image(path: Path) -> None:
             iccBytes = io.BytesIO(iccProfile)
             originalColorProfile = ImageCms.ImageCmsProfile(iccBytes)
 
-        new_dimension = int(
-            (1 + constants.EDGE_SIZE) * max(old_image.height, old_image.width)
+        new_dimension = (
+            max(old_image.height, old_image.width)
+            if no_border
+            else int((1 + constants.EDGE_SIZE) * max(old_image.height, old_image.width))
         )
         new_size = (new_dimension, new_dimension)
         new_image = Image.new("RGB", new_size, "White")
