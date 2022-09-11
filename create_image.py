@@ -1,13 +1,37 @@
+import argparse
+import constants
+import io
 from pathlib import Path, PurePath
 import sys
-import io
-from typing import List
-import constants
+from typing import List, Dict
 
 from PIL import Image, ImageCms, ImageOps, UnidentifiedImageError
 
 
-def validate_args(img_paths: List[str]) -> None:
+def parse_args() -> Dict[str, any]:
+    """Setup command-line argument parser
+
+    Returns:
+        Dict[str, any]: Dictionary representation of command-line args
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "image_paths",
+        type=str,
+        nargs="+",
+        help="image paths or directory paths to images to be 'polaroidised'",
+    )
+    parser.add_argument(
+        "-n",
+        action="store_true",
+        help="disable borders on the longer image dimension",
+        dest="disable_borders",
+    )
+
+    return vars(parser.parse_args())
+
+
+def validate_paths(img_paths: List[str]) -> None:
     """Validate whether the command-line arguments are directory/file paths
 
     Args:
@@ -29,12 +53,12 @@ def create_polaroid_images(img_paths: List[str]) -> None:
     for path in img_paths:
         img_path = Path(path)
         if img_path.is_file():
-            if (constants.SUFFIX not in str(img_path)):
+            if constants.SUFFIX not in str(img_path):
                 generate_new_image(img_path)
         elif img_path.is_dir():
             files = [f for f in img_path.iterdir() if Path(f).is_file()]
             for fpath in files:
-                if (constants.SUFFIX not in str(fpath)):
+                if constants.SUFFIX not in str(fpath):
                     generate_new_image(fpath)
         else:
             sys.exit(constants.INVALID_PATHS_PROVIDED)
@@ -51,14 +75,15 @@ def generate_new_image(path: Path) -> None:
         old_image = ImageOps.exif_transpose(Image.open(str(path)))
         old_size = old_image.size
 
-        iccProfile = old_image.info.get('icc_profile')
+        iccProfile = old_image.info.get("icc_profile")
         originalColorProfile = None
         if iccProfile:
             iccBytes = io.BytesIO(iccProfile)
             originalColorProfile = ImageCms.ImageCmsProfile(iccBytes)
 
-        new_dimension = int((1 + constants.EDGE_SIZE) *
-                            max(old_image.height, old_image.width))
+        new_dimension = int(
+            (1 + constants.EDGE_SIZE) * max(old_image.height, old_image.width)
+        )
         new_size = (new_dimension, new_dimension)
         new_image = Image.new("RGB", new_size, "White")
 
@@ -70,20 +95,12 @@ def generate_new_image(path: Path) -> None:
         new_file_path_string = file_name + constants.SUFFIX + constants.JPEG
         new_file_path = PurePath.joinpath(parent_dir, new_file_path_string)
 
-        new_image.save(str(new_file_path),
-                       icc_profile=originalColorProfile.tobytes() if iccProfile else None)
+        new_image.save(
+            str(new_file_path),
+            icc_profile=originalColorProfile.tobytes() if iccProfile else None,
+        )
     except (UnidentifiedImageError):
         pass
     except BaseException as err:
         print(f"Unexpected {err=}, {type(err)=}")
         raise
-
-
-if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        sys.exit(constants.NO_PATHS_PROVIDED)
-
-    paths = sys.argv[1:]
-    validate_args(paths)
-    create_polaroid_images(paths)
-    sys.exit(0)
