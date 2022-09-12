@@ -1,4 +1,5 @@
 from typing import Tuple, Union
+
 from create_images.aspect_ratio import AspectRatio
 
 

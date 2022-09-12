@@ -1,4 +1,3 @@
-from create_images import constants, resize
 import io
 from pathlib import Path, PurePath
 import sys
@@ -6,6 +5,7 @@ from typing import List
 
 from PIL import Image, ImageCms, ImageOps, UnidentifiedImageError
 
+from create_images import constants, resize
 from create_images.aspect_ratio import AspectRatio
 
 
