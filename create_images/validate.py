@@ -1,79 +1,82 @@
 import argparse
 from pathlib import Path
 import sys
-from typing import List, Dict, Union
+from typing import List, Union
 
 from create_images import constants
 
 
-def parse_args() -> Union[Dict[str, any], float]:
-    """Setup command-line argument parser
+def parse_args() -> Union[List[str], float]:
+    """Parses command-line arguments
 
     Returns:
-        Dict[str, any]: Dictionary representation of command-line args
+        Union[List[str], float]: Image paths, border sizing
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "image_paths",
+        constants.IMAGE_PATHS,
         type=str,
         nargs="+",
-        help="image paths or directory paths to images to be 'polaroidised'",
+        help=constants.IMAGE_PATHS_HELP,
     )
     parser.add_argument(
         "-nb",
         "--no-border",
         action="store_true",
-        help="disable borders on the longer image dimension",
-        dest="disable_borders",
+        help=constants.DISABLE_BORDERS_HELP,
+        dest=constants.DISABLE_BORDERS,
     )
     parser.add_argument(
         "-xs",
         "--extra-small",
         action="store_true",
-        help="add extra small borders on the longer image dimension",
-        dest="xs_borders",
+        help=constants.XS_BORDERS_HELP,
+        dest=constants.XS_BORDERS,
     )
     parser.add_argument(
         "-sm",
         "--small",
         action="store_true",
-        help="add small borders on the longer image dimension",
-        dest="sm_borders",
+        help=constants.SM_BORDERS_HELP,
+        dest=constants.SM_BORDERS,
     )
     parser.add_argument(
         "-md",
         "--medium",
         action="store_true",
-        help="add medium borders on the longer image dimension (default)",
-        dest="md_borders",
+        help=constants.MD_BORDERS_HELP,
+        dest=constants.MD_BORDERS,
     )
     parser.add_argument(
         "-lg",
         "--large",
         action="store_true",
-        help="add large borders on the longer image dimension",
-        dest="lg_borders",
+        help=constants.LG_BORDERS_HELP,
+        dest=constants.LG_BORDERS,
     )
     parser.add_argument(
         "-xl",
         "--extra-large",
         action="store_true",
-        help="add extra large borders on the longer image dimension",
-        dest="xl_borders",
+        help=constants.XL_BORDERS_HELP,
+        dest=constants.XL_BORDERS,
     )
 
     args = vars(parser.parse_args())
     edge_size = None
 
     for key in args:
-        if key != "image_paths" and args[key]:
+        if key != constants.IMAGE_PATHS and args[key]:
             edge_size = (
                 constants.EDGE_MAP[key]
                 if edge_size == None
-                else parser.error("please specify one border size flag only")
+                else parser.error(constants.TOO_MANY_SIZE_FLAGS)
             )
 
-    return args, edge_size if edge_size != None else constants.EDGE_MAP["md_borders"]
+    return (
+        args[constants.IMAGE_PATHS],
+        edge_size if edge_size != None else constants.EDGE_MAP[constants.MD_BORDERS],
+    )
 
 
 def validate_paths(img_paths: List[str]) -> None:
