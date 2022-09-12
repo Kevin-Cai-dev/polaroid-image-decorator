@@ -1,4 +1,4 @@
-# polaroid-image-resizing
+# polaroid-image-decorator
 
 A quick script to add polaroid-esque borders to images.
 Don't know if it'll work outside of Unix environments.
