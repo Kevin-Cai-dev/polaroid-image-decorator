@@ -1,91 +1,148 @@
-import argparse
+from argparse import ArgumentParser
 from pathlib import Path
 import sys
-from typing import List, Union
+from typing import List, Tuple
 
 from create_images import constants
+from create_images.aspect_ratio import AspectRatio
 
 
-def parse_args() -> Union[List[str], float]:
+def parse_args() -> Tuple[List[str], float, AspectRatio]:
     """Parses command-line arguments
 
     Returns:
-        Union[List[str], float]: Image paths, border sizing
+        Tuple[List[str], float, AspectRatio]: Image paths, thin border sizing as
+        a percentage, desired aspect ratio
     """
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         constants.IMAGE_PATHS,
         type=str,
         nargs="+",
         help=constants.IMAGE_PATHS_HELP,
     )
+    add_edge_size_flags(parser)
+    add_aspect_ratio_flags(parser)
+
+    args = vars(parser.parse_args())
+    edge_size = None
+    aspect_ratio = None
+
+    for key in args:
+        if key in constants.EDGE_KEYS and args[key]:
+            edge_size = (
+                constants.EDGE_MAP[key]
+                if edge_size is None
+                else parser.error(constants.TOO_MANY_SIZE_FLAGS)
+            )
+        if key in constants.RATIO_KEYS and args[key]:
+            aspect_ratio = (
+                constants.ASPECT_RATIO_MAP[key]
+                if aspect_ratio is None
+                else parser.error(constants.TOO_MANY_ASPECT_RATIO_FLAGS)
+            )
+
+    return (
+        args[constants.IMAGE_PATHS],
+        edge_size
+        if edge_size is not None
+        else constants.EDGE_MAP[constants.MD_BORDERS],
+        aspect_ratio
+        if aspect_ratio is not None
+        else constants.ASPECT_RATIO_MAP[constants.RATIO_1_1],
+    )
+
+
+def add_edge_size_flags(parser: ArgumentParser) -> None:
+    """Adds border size related flags to the argument parser
+
+    Args:
+        parser (ArgumentParser): Argument parser used for command-line flags
+    """
     parser.add_argument(
-        "-nb",
+        "--nb",
         "--no-border",
         action="store_true",
         help=constants.DISABLE_BORDERS_HELP,
         dest=constants.DISABLE_BORDERS,
     )
     parser.add_argument(
-        "-xs",
+        "--xs",
         "--extra-small",
         action="store_true",
         help=constants.XS_BORDERS_HELP,
         dest=constants.XS_BORDERS,
     )
     parser.add_argument(
-        "-sm",
+        "--sm",
         "--small",
         action="store_true",
         help=constants.SM_BORDERS_HELP,
         dest=constants.SM_BORDERS,
     )
     parser.add_argument(
-        "-md",
+        "--md",
         "--medium",
         action="store_true",
         help=constants.MD_BORDERS_HELP,
         dest=constants.MD_BORDERS,
     )
     parser.add_argument(
-        "-lg",
+        "--lg",
         "--large",
         action="store_true",
         help=constants.LG_BORDERS_HELP,
         dest=constants.LG_BORDERS,
     )
     parser.add_argument(
-        "-xl",
+        "--xl",
         "--extra-large",
         action="store_true",
         help=constants.XL_BORDERS_HELP,
         dest=constants.XL_BORDERS,
     )
 
-    args = vars(parser.parse_args())
-    edge_size = None
 
-    for key in args:
-        if key != constants.IMAGE_PATHS and args[key]:
-            edge_size = (
-                constants.EDGE_MAP[key]
-                if edge_size == None
-                else parser.error(constants.TOO_MANY_SIZE_FLAGS)
-            )
+def add_aspect_ratio_flags(parser: ArgumentParser) -> None:
+    """Adds aspect ratio related flags to the argument parser
 
-    return (
-        args[constants.IMAGE_PATHS],
-        edge_size if edge_size != None else constants.EDGE_MAP[constants.MD_BORDERS],
+    Args:
+        parser (ArgumentParser): Argument parser used for command-line flags
+    """
+    parser.add_argument(
+        "--3-2",
+        action="store_true",
+        help=constants.RATIO_3_2_HELP,
+        dest=constants.RATIO_3_2,
+    )
+    parser.add_argument(
+        "--5-4",
+        action="store_true",
+        help=constants.RATIO_5_4_HELP,
+        dest=constants.RATIO_5_4,
+    )
+    parser.add_argument(
+        "--16-9",
+        action="store_true",
+        help=constants.RATIO_16_9_HELP,
+        dest=constants.RATIO_16_9,
     )
 
 
-def validate_paths(img_paths: List[str]) -> None:
-    """Validate whether the command-line arguments are directory/file paths
+def validate_paths(img_paths: List[str]) -> List[Path]:
+    """Validate whether the command-line arguments are directory/file paths, and
+    return them in Path format if valid
 
     Args:
-        img_paths (List[str]): List of paths provided via stdin
+        img_paths (List[str]): List of paths provided via command-line
+
+    Returns:
+        List[Path]: List of Path representations for each file/directory pathstring
     """
+    valid_paths = []
     for path in img_paths:
         check_path = Path(path)
         if not check_path.is_file() and not check_path.is_dir():
             sys.exit(constants.INVALID_PATHS_PROVIDED)
+        valid_paths.append(check_path)
+    return valid_paths
