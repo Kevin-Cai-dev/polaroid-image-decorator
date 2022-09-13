@@ -111,18 +111,21 @@ def add_aspect_ratio_flags(parser: ArgumentParser) -> None:
     """
     parser.add_argument(
         "--3-2",
+        "--2-3",
         action="store_true",
         help=constants.RATIO_3_2_HELP,
         dest=constants.RATIO_3_2,
     )
     parser.add_argument(
         "--5-4",
+        "--4-5",
         action="store_true",
         help=constants.RATIO_5_4_HELP,
         dest=constants.RATIO_5_4,
     )
     parser.add_argument(
         "--16-9",
+        "--9-16",
         action="store_true",
         help=constants.RATIO_16_9_HELP,
         dest=constants.RATIO_16_9,
