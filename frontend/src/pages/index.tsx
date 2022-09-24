@@ -1,8 +1,9 @@
+import type { NextPage } from 'next';
+import { useState, useRef, ChangeEvent } from 'react';
+
 import { InputSettings } from '@common/types';
 import { GithubCorner } from '@components/github-corner';
 import { Settings } from '@components/settings';
-import type { NextPage } from 'next';
-import { useState, useRef, ChangeEvent } from 'react';
 
 const Home: NextPage = () => {
     const [selectedFile, setSelectedFile] = useState<File>();

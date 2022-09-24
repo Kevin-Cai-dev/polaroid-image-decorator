@@ -1,8 +1,9 @@
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+
 import { borderSizes, aspectRatios } from '@common/static';
 import { InputSettings } from '@common/types';
 import { EqualBorderToggle } from '@components/equal-border-toggle';
 import { Radio } from '@components/radio';
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 interface Props {
     handleUpdate: Dispatch<SetStateAction<InputSettings>>;
