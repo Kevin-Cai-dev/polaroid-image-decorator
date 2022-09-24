@@ -6,7 +6,11 @@ import { useState, useRef, ChangeEvent } from 'react';
 
 const Home: NextPage = () => {
     const [selectedFile, setSelectedFile] = useState<File>();
-    const [inputSettings, setInputSettings] = useState<InputSettings>();
+    const [inputSettings, setInputSettings] = useState<InputSettings>({
+        evenBorder: false,
+        borderWidth: '',
+        aspectRatio: '',
+    });
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
     const onFileClick = () => {
@@ -23,8 +27,17 @@ const Home: NextPage = () => {
          * - Send a POST request with both file and inputSettings in the body
          * - receive new image from backend and render
          */
-        console.log(selectedFile);
-        console.log(inputSettings);
+        const formData = new FormData();
+        selectedFile && formData.append('file', selectedFile);
+        formData.append('params', JSON.stringify(inputSettings));
+        console.log(formData.get('file'));
+        fetch('http://localhost:8000/images/generate', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+            .catch((err) => console.log(err));
     };
 
     return (
@@ -49,7 +62,7 @@ const Home: NextPage = () => {
                 {selectedFile ? selectedFile.name : 'No file chosen'}
             </span>
             <div className="divider" />
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-10">
                 <Settings handleUpdate={setInputSettings} />
                 <button
                     className="btn btn-accent"

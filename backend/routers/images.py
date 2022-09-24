@@ -1,8 +1,18 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Form
+from pydantic import BaseModel
+
+from controllers.image_controller import open_image
 
 router = APIRouter(prefix="/images")
 
 
+class Params(BaseModel):
+    evenBorder: bool
+    borderWidth: str
+    aspectRatio: str
+
+
 @router.post("/generate/")
-async def modify_image(file: UploadFile = File(...)):
-    return {"filename": file.filename}
+def modify_image(file: UploadFile = File(None), params: str = Form()):
+    open_image(file.file)
+    return "OK"

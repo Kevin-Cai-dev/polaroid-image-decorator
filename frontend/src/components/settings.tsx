@@ -5,7 +5,7 @@ import { Radio } from '@components/radio';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 interface Props {
-    handleUpdate: Dispatch<SetStateAction<InputSettings | undefined>>;
+    handleUpdate: Dispatch<SetStateAction<InputSettings>>;
 }
 
 export const Settings = ({ handleUpdate }: Props) => {
@@ -29,7 +29,7 @@ export const Settings = ({ handleUpdate }: Props) => {
                 isToggled={evenBorder}
                 handleChange={setEvenBorder}
             />
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6">
                 {borderSizes.map((data) => (
                     <Radio
                         data={data}
@@ -39,7 +39,7 @@ export const Settings = ({ handleUpdate }: Props) => {
                     />
                 ))}
             </div>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-6">
                 {aspectRatios.map((data) => (
                     <Radio
                         data={data}
