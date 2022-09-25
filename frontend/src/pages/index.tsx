@@ -103,7 +103,7 @@ const Home: NextPage = () => {
                     </a>
                     <picture>
                         <source srcSet={newImage} type="image/jpeg" />
-                        <img src={newImage} alt="" />
+                        <img src={newImage} alt="" className="mx-auto" />
                     </picture>
                 </>
             )}
