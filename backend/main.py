@@ -17,10 +17,10 @@ app.add_middleware(
 
 
 @app.get("/")
-def root():
-    return {"message": "Hello world!"}
+def root() -> str:
+    """root endpoint, used to test if the system is up
 
-
-@app.get("/heartbeat")
-def heartbeat():
+    Returns:
+        str: healthcheck response
+    """
     return "UP"

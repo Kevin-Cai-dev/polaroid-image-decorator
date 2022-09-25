@@ -28,16 +28,17 @@ const Home: NextPage = () => {
          * - Send a POST request with both file and inputSettings in the body
          * - receive new image from backend and render
          */
+        const { evenBorder, borderWidth, aspectRatio } = inputSettings
         const formData = new FormData();
         selectedFile && formData.append('file', selectedFile);
-        formData.append('params', JSON.stringify(inputSettings));
-        console.log(formData.get('file'));
+        formData.append('even_border', evenBorder.toString())
+        formData.append('border_width_key', borderWidth)
+        formData.append('aspect_ratio_key', aspectRatio)
         fetch('http://localhost:8000/images/generate', {
             method: 'POST',
             body: formData,
         })
-            .then((res) => res.json())
-            .then((data) => console.log(data))
+            .then((res) => console.log(res))
             .catch((err) => console.log(err));
     };
 
