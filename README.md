@@ -1,39 +1,22 @@
 # polaroid-image-decorator
 
-A quick script to add polaroid-esque borders to images.
-Don't know if it'll work outside of Unix environments.
+A program to add polaroid-esque white borders to images, created since I
+couldn't find a good, existing solution without any hoops to jump through.
 
-The new images will be suffixed with `_POLAROID` and saved as `.jpg` in the same
-location as the original files.
+This repo consists of two parts:
 
-It defaults to a square aspect ratio and `md`
-thickness borders (3% on each end of the longer image dimension)
+**Web app**: An interactive website which allows you to upload an image, generate
+a polaroid-esque version, and download it
 
-```bash
-python3 -m pip install --upgrade pip
-pip install -r requirements.txt
+- [`frontend`](/frontend/): contains the frontend of the web app, a simple single-page
+  application.
 
-python3 create_image.py [...flags] <...image_paths>
-```
+  `Next.js, Tailwind, DaisyUI, Typescript`
 
-## Examples
+- [`backend`](/backend/): contains the image processing logic of the web app, a simple REST
+  endpoint which takes in image files and returns a polaroid-esque version back.
 
-Original Image
+  `Python, FastAPI, Pillow`
 
-<img src="examples/DSCF2874.JPG" alt="" width=600>
-
-With default settings
-
-<img src="examples/DSCF2874_POLAROID_normal.jpg" alt="" width=600>
-
-With `--nb` flag (no border)
-
-<img src="examples/DSCF2874_POLAROID_no_border.jpg" alt="" width=600>
-
-With `--xl` flag (xl thickness border)
-
-<img src="examples/DSCF2874_POLAROID_xl_border.jpg" alt="" width=600>
-
-with `--5-4` flag (5:4 aspect ratio)
-
-<img src="examples/DSCF2874_POLAROID_5_4_ratio.jpg" alt="" width=600>
+**CLI**: The [original version](/cli/), a CLI program which allows image(s) to be
+converted and saved in the same location as the original

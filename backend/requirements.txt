@@ -1,1 +1,2 @@
 fastapi
+Pillow==9.2.0
