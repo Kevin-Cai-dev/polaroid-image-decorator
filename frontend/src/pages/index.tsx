@@ -1,18 +1,29 @@
 import type { NextPage } from 'next';
 import { useState, useRef, ChangeEvent } from 'react';
 
-import { InputSettings } from '@common/types';
+import { createImage } from '@common/utils';
+import { ErrorAlert } from '@components/error-alert';
 import { GithubCorner } from '@components/github-corner';
 import { Settings } from '@components/settings';
 
 const Home: NextPage = () => {
     const [selectedFile, setSelectedFile] = useState<File>();
-    const [inputSettings, setInputSettings] = useState<InputSettings>({
-        evenBorder: false,
-        borderWidth: '',
-        aspectRatio: '',
-    });
+    const [newImage, setNewImage] = useState<string>();
+    const [evenBorder, setEvenBorder] = useState(false);
+    const [borderWidth, setBorderWidth] = useState('md_borders');
+    const [aspectRatio, setAspectRatio] = useState('ratio_1_1');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
     const hiddenFileInput = useRef<HTMLInputElement>(null);
+
+    const settingsProps = {
+        evenBorder,
+        setEvenBorder,
+        borderWidth,
+        setBorderWidth,
+        aspectRatio,
+        setAspectRatio,
+    };
 
     const onFileClick = () => {
         hiddenFileInput.current?.click();
@@ -22,37 +33,34 @@ const Home: NextPage = () => {
         e.target.files && setSelectedFile(e.target.files[0]);
     };
 
-    const createImage = () => {
-        /**
-         * TODO
-         * - Send a POST request with both file and inputSettings in the body
-         * - receive new image from backend and render
-         */
-        const { evenBorder, borderWidth, aspectRatio } = inputSettings
+    const getImage = async () => {
         const formData = new FormData();
         selectedFile && formData.append('file', selectedFile);
-        formData.append('even_border', evenBorder.toString())
-        formData.append('border_width_key', borderWidth)
-        formData.append('aspect_ratio_key', aspectRatio)
-        fetch('http://localhost:8000/images/generate', {
-            method: 'POST',
-            body: formData,
-        })
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
+        formData.append('even_border', evenBorder.toString());
+        formData.append('border_width_key', borderWidth);
+        formData.append('aspect_ratio_key', aspectRatio);
+
+        setNewImage(undefined);
+        setIsError(false);
+        setIsLoading(true);
+        const [response, error] = await createImage(formData);
+        setIsLoading(false);
+        if (error) {
+            return setIsError(true);
+        }
+        setNewImage(response);
     };
 
     return (
-        <div className="prose mx-auto max-w-screen-lg p-8">
+        <div className="prose mx-auto min-h-screen max-w-screen-lg p-8">
             <GithubCorner />
             <h1 className="text-center font-sans font-bold">
                 Polaroid Image Generator
             </h1>
             <input
                 type="file"
-                name="file"
-                id="file-upload"
-                accept=".jpg, .jpeg, .png"
+                name="image-upload"
+                accept=".jpg, .jpeg, .png, .tiff, .webp"
                 ref={hiddenFileInput}
                 className="hidden"
                 onChange={handleUpload}
@@ -65,15 +73,33 @@ const Home: NextPage = () => {
             </span>
             <div className="divider" />
             <div className="flex flex-col gap-10">
-                <Settings handleUpdate={setInputSettings} />
+                <Settings {...settingsProps} />
                 <button
-                    className="btn btn-accent"
-                    onClick={createImage}
+                    className="btn btn-secondary"
+                    onClick={getImage}
                     disabled={!selectedFile}
                 >
                     Generate!
                 </button>
             </div>
+            <div className="divider" />
+            {isLoading && <progress className="progress progress-primary" />}
+            {isError && <ErrorAlert />}
+            {newImage && !isLoading && (
+                <>
+                    <a
+                        href={newImage}
+                        download={`POLAROID_${selectedFile?.name}`}
+                        className="btn btn-accent"
+                    >
+                        Download image
+                    </a>
+                    <picture>
+                        <source srcSet={newImage} type="image/jpeg" />
+                        <img src={newImage} alt="" />
+                    </picture>
+                </>
+            )}
         </div>
     );
 };

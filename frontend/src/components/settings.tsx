@@ -1,28 +1,26 @@
-import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 import { borderSizes, aspectRatios } from '@common/static';
-import { InputSettings } from '@common/types';
 import { EqualBorderToggle } from '@components/equal-border-toggle';
 import { Radio } from '@components/radio';
 
 interface Props {
-    handleUpdate: Dispatch<SetStateAction<InputSettings>>;
+    evenBorder: boolean;
+    setEvenBorder: Dispatch<SetStateAction<boolean>>;
+    borderWidth: string;
+    setBorderWidth: Dispatch<SetStateAction<string>>;
+    aspectRatio: string;
+    setAspectRatio: Dispatch<SetStateAction<string>>;
 }
 
-export const Settings = ({ handleUpdate }: Props) => {
-    const [evenBorder, setEvenBorder] = useState(false);
-    const [borderWidth, setBorderWidth] = useState('md_borders');
-    const [aspectRatio, setAspectRatio] = useState('ratio_1_1');
-
-    useEffect(() => {
-        handleUpdate({
-            evenBorder,
-            borderWidth,
-            aspectRatio,
-        });
-        console.log('updated');
-    }, [handleUpdate, evenBorder, borderWidth, aspectRatio]);
-
+export const Settings = ({
+    evenBorder,
+    setEvenBorder,
+    borderWidth,
+    setBorderWidth,
+    aspectRatio,
+    setAspectRatio,
+}: Props) => {
     return (
         <>
             <h2 className="mt-4 mb-0">Settings</h2>
