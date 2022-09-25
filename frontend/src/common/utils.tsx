@@ -7,6 +7,10 @@ export const createImage = async (
             {
                 method: 'POST',
                 body: formData,
+                mode: 'cors',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
             }
         );
         if (res.status != 200) {
