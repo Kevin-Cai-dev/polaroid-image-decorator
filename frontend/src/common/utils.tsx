@@ -2,10 +2,13 @@ export const createImage = async (
     formData: FormData
 ): Promise<[string | undefined, string | undefined]> => {
     try {
-        const res = await fetch('http://localhost:8000/images/generate', {
-            method: 'POST',
-            body: formData,
-        });
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_ENDPOINT}/images/generate`,
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
         if (res.status != 200) {
             const errorBody = await res.json();
             throw new Error(errorBody.detail);
