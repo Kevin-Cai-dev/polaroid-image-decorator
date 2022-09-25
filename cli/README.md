@@ -1,4 +1,4 @@
-# polaroid-image-decorator
+# polaroid-image-decorator-cli
 
 A quick script to add polaroid-esque borders to images.
 Don't know if it'll work outside of Unix environments.
