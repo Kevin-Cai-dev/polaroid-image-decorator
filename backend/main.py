@@ -5,11 +5,7 @@ from routers import images
 app = FastAPI()
 app.include_router(images.router)
 
-origins = [
-    "http://localhost:3000",
-    "https://localhost:3000",
-    "https://polaroid-image-decorator-frontend.vercel.app/",
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
