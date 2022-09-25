@@ -1,17 +1,21 @@
 from io import BytesIO
-from fastapi import APIRouter, UploadFile, Form
+from fastapi import APIRouter, UploadFile, Form, Response
 from controllers.image_controller import generate_image
 
 router = APIRouter(prefix="/images")
 
 
-@router.post("/generate/")
+@router.post(
+    "/generate",
+    responses={200: {"content": {"image/jpeg": {}}}},
+    response_class=Response,
+)
 def modify_image(
     file: UploadFile,
     even_border: bool = Form(),
     border_width_key: str = Form(),
     aspect_ratio_key: str = Form(),
-) -> BytesIO:
+) -> Response:
     """POST endpoint to generate new polaroid-esque image
 
     Args:
@@ -22,9 +26,9 @@ def modify_image(
         aspect_ratio_key (str, optional): specified aspect ratio, provided as a key. Defaults to Form().
 
     Returns:
-        BytesIO: generated image, as bytes
+        Response: generated image, as bytes
     """
     img_bytes = generate_image(
         file.file, even_border, border_width_key, aspect_ratio_key
     )
-    return img_bytes
+    return Response(content=img_bytes, media_type="image/jpeg")

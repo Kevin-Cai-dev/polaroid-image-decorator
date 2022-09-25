@@ -10,7 +10,7 @@ from models.aspect_ratio import AspectRatio
 
 def generate_image(
     file: BinaryIO, even_borders: bool, border_width_key: str, aspect_ratio_key: str
-) -> BytesIO:
+) -> bytes:
     """Generates a polaroid-esque image for the given file
 
     Args:
@@ -59,7 +59,7 @@ def generate_image(
         )
         byte_io.seek(0)
 
-        return byte_io
+        return byte_io.read1()
     except UnidentifiedImageError:
         raise BAD_IMAGE
     except Exception as e:
