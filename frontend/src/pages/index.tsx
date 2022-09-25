@@ -3,6 +3,7 @@ import { useState, useRef, ChangeEvent } from 'react';
 
 import { createImage } from '@common/utils';
 import { ErrorAlert } from '@components/error-alert';
+import { Footer } from '@components/footer';
 import { GithubCorner } from '@components/github-corner';
 import { Settings } from '@components/settings';
 
@@ -52,7 +53,7 @@ const Home: NextPage = () => {
     };
 
     return (
-        <div className="prose mx-auto min-h-screen max-w-screen-lg p-8">
+        <div className="prose mx-auto flex min-h-screen max-w-screen-lg flex-col p-8 text-base-content">
             <GithubCorner />
             <h1 className="text-center font-sans font-bold">
                 Polaroid Image Generator
@@ -65,12 +66,15 @@ const Home: NextPage = () => {
                 className="hidden"
                 onChange={handleUpload}
             />
-            <button className="btn btn-primary" onClick={onFileClick}>
-                Upload image
-            </button>
-            <span className="pl-4">
-                {selectedFile ? selectedFile.name : 'No file chosen'}
-            </span>
+            <div>
+                <button className="btn btn-primary" onClick={onFileClick}>
+                    Upload image
+                </button>
+                <span className="pl-4">
+                    {selectedFile ? selectedFile.name : 'No file chosen'}
+                </span>
+            </div>
+
             <div className="divider" />
             <div className="flex flex-col gap-10">
                 <Settings {...settingsProps} />
@@ -100,6 +104,7 @@ const Home: NextPage = () => {
                     </picture>
                 </>
             )}
+            <Footer />
         </div>
     );
 };
