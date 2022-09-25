@@ -15,6 +15,7 @@ const Home: NextPage = () => {
     const [aspectRatio, setAspectRatio] = useState('ratio_1_1');
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const hiddenFileInput = useRef<HTMLInputElement>(null);
 
     const settingsProps = {
@@ -42,11 +43,13 @@ const Home: NextPage = () => {
         formData.append('aspect_ratio_key', aspectRatio);
 
         setNewImage(undefined);
+        setErrorMessage('');
         setIsError(false);
         setIsLoading(true);
         const [response, error] = await createImage(formData);
         setIsLoading(false);
         if (error) {
+            setErrorMessage(error);
             return setIsError(true);
         }
         setNewImage(response);
@@ -88,7 +91,7 @@ const Home: NextPage = () => {
             </div>
             <div className="divider" />
             {isLoading && <progress className="progress progress-primary" />}
-            {isError && <ErrorAlert />}
+            {isError && <ErrorAlert error={errorMessage} />}
             {newImage && !isLoading && (
                 <>
                     <a

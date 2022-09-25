@@ -1,17 +1,24 @@
 export const createImage = async (
     formData: FormData
-): Promise<[string | undefined, undefined | unknown]> => {
+): Promise<[string | undefined, string | undefined]> => {
     try {
         const res = await fetch('http://localhost:8000/images/generate', {
             method: 'POST',
             body: formData,
         });
         if (res.status != 200) {
-            throw new Error('something went wrong!');
+            const errorBody = await res.json();
+            throw new Error(errorBody.detail);
         }
         const blob = await res.blob();
         return [URL.createObjectURL(blob), undefined];
     } catch (err) {
-        return [undefined, err];
+        if (err instanceof Error) {
+            return [undefined, err.message];
+        }
+        return [
+            undefined,
+            'something went wrong while trying to create the new image',
+        ];
     }
 };

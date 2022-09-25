@@ -70,7 +70,9 @@ def generate_new_image(path: Path, edge_size: float, aspect_ratio: AspectRatio) 
         new_file_path = PurePath.joinpath(parent_dir, new_file_path_string)
         new_image.save(
             str(new_file_path),
-            icc_profile=originalColourProfile.tobytes() if iccProfile else None,
+            icc_profile=originalColourProfile.tobytes()
+            if originalColourProfile
+            else None,
         )
     except (UnidentifiedImageError):
         pass

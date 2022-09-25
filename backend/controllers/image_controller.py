@@ -1,6 +1,7 @@
 from io import BytesIO
 from PIL import Image, ImageOps, ImageCms, UnidentifiedImageError
 from typing import BinaryIO, Tuple, Union
+from fastapi import HTTPException
 
 from common.exceptions import BAD_IMAGE, BAD_PARAMETERS, UNKNOWN_EXCEPTION
 from common.key_maps import EDGE_MAP, ASPECT_RATIO_MAP
@@ -60,10 +61,12 @@ def generate_image(
         byte_io.seek(0)
 
         return byte_io.read1()
+    except HTTPException:
+        raise
     except UnidentifiedImageError:
         raise BAD_IMAGE
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    except BaseException as e:
+        print(f"Unexpected {e=}, {type(e)=}")
         raise UNKNOWN_EXCEPTION
 
 
