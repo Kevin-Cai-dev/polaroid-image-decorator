@@ -1,13 +1,13 @@
 from argparse import ArgumentParser
 from pathlib import Path
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from create_images import constants
 from create_images.aspect_ratio import AspectRatio
 
 
-def parse_args() -> Tuple[List[str], float, AspectRatio]:
+def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
     """Parses command-line arguments
 
     Returns:
@@ -28,6 +28,8 @@ def parse_args() -> Tuple[List[str], float, AspectRatio]:
     edge_size = None
     aspect_ratio = None
 
+    even_borders = True if args[constants.EQUAL_BORDERS] else False
+
     for key in args:
         if key in constants.EDGE_KEYS and args[key]:
             edge_size = (
@@ -42,14 +44,25 @@ def parse_args() -> Tuple[List[str], float, AspectRatio]:
                 else parser.error(constants.TOO_MANY_ASPECT_RATIO_FLAGS)
             )
 
+    if not aspect_ratio and not even_borders:
+        aspect_ratio = constants.ASPECT_RATIO_MAP[constants.RATIO_1_1]
+
     return (
         args[constants.IMAGE_PATHS],
         edge_size
         if edge_size is not None
         else constants.EDGE_MAP[constants.MD_BORDERS],
-        aspect_ratio
-        if aspect_ratio is not None
-        else constants.ASPECT_RATIO_MAP[constants.RATIO_1_1],
+        aspect_ratio,
+    )
+
+
+def add_equal_border_flag(parser: ArgumentParser) -> None:
+    parser.add_argument(
+        "-e",
+        "--eq",
+        action="store_true",
+        help=constants.EQUAL_BORDERS_HELP,
+        dest=constants.EQUAL_BORDERS,
     )
 
 
