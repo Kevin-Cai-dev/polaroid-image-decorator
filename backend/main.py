@@ -9,6 +9,8 @@ load_dotenv()
 
 origins = [os.getenv("PRODUCTION_URL"), os.getenv("LOCAL_URL")]
 
+print(origins)
+
 app = FastAPI()
 app.include_router(images.router)
 app.add_middleware(
