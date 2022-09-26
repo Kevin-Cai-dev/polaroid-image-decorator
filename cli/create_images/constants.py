@@ -1,6 +1,9 @@
 from create_images.aspect_ratio import AspectRatio
 
 # error messages
+EQUAL_BORDERS_WITH_ASPECT_RATIO = (
+    "equal borders flag cannot be provided with an aspect ratio flag"
+)
 TOO_MANY_SIZE_FLAGS = "please specify one border size flag only"
 TOO_MANY_ASPECT_RATIO_FLAGS = "please specify one aspect ratio flag only"
 INVALID_PATHS_PROVIDED = "Please provide valid image or directory paths!"

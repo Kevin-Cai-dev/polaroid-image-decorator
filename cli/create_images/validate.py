@@ -38,7 +38,9 @@ def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
                 if edge_size is None
                 else parser.error(constants.TOO_MANY_SIZE_FLAGS)
             )
-        if key in constants.RATIO_KEYS and args[key] and not even_borders:
+        if key in constants.RATIO_KEYS and args[key]:
+            if even_borders:
+                parser.error(constants.EQUAL_BORDERS_WITH_ASPECT_RATIO)
             aspect_ratio = (
                 constants.ASPECT_RATIO_MAP[key]
                 if aspect_ratio is None

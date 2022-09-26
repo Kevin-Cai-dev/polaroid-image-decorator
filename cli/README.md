@@ -37,3 +37,7 @@ With `--xl` flag (xl thickness border)
 with `--5-4` flag (5:4 aspect ratio)
 
 <img src="examples/DSCF2874_POLAROID_5_4_ratio.jpg" alt="" width=600>
+
+with `-e` / `--eq` flag (equal borders)
+
+<img src="examples/DSCF2874_POLAROID_equal_borders.jpg" alt="" width=600>
