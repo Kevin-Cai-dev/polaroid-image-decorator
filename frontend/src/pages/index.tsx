@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import { useState, useRef, ChangeEvent } from 'react';
 
 import { createImage } from '@common/utils';
+import { Disclaimer } from '@components/disclaimer';
 import { ErrorAlert } from '@components/error-alert';
 import { Footer } from '@components/footer';
 import { GithubCorner } from '@components/github-corner';
@@ -61,6 +62,7 @@ const Home: NextPage = () => {
             <h1 className="text-center font-sans font-bold">
                 Polaroid Image Generator
             </h1>
+            <Disclaimer />
             <input
                 type="file"
                 name="image-upload"
@@ -79,6 +81,7 @@ const Home: NextPage = () => {
             </div>
 
             <div className="divider" />
+
             <div className="flex flex-col gap-10">
                 <Settings {...settingsProps} />
                 <button
@@ -89,7 +92,9 @@ const Home: NextPage = () => {
                     Generate!
                 </button>
             </div>
+
             <div className="divider" />
+
             {isLoading && <progress className="progress progress-primary" />}
             {isError && <ErrorAlert error={errorMessage} />}
             {newImage && !isLoading && (

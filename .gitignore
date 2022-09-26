@@ -2,3 +2,4 @@ __pycache__/
 .vscode/
 .env*
 .deta/
+.mypy_cache/
