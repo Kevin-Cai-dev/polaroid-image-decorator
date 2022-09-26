@@ -1,21 +1,21 @@
-from typing import Tuple, Union, Optional
+from typing import Tuple, Optional
 
 from create_images.aspect_ratio import AspectRatio
 
 
 def get_new_dimensions(
     old_dim: Tuple[int, int], edge_size: float, aspect_ratio: Optional[AspectRatio]
-) -> Union[Tuple[int, int], None]:
+) -> Optional[Tuple[int, int]]:
     """Returns dimensions of new image, based on provided edge size and aspect
     ratio. New dimensions match the original image orientation
 
     Args:
         old_dim (Tuple[int, int]): Original image size
         edge_size (float): Edge thickness along the longer image axis
-        asp_ratio (AspectRatio): New aspect ratio
+        asp_ratio (Optional[AspectRatio]): New aspect ratio
 
     Returns:
-        Union[Tuple[int, int], None]: New dimensions if new aspect ratio is
+        Optional[Tuple[int, int]]: New dimensions if new aspect ratio is
         possible without cropping the original image, otherwise None
     """
     if not aspect_ratio:
@@ -29,7 +29,7 @@ def get_new_dimensions(
 
 def get_portrait_dimensions(
     old_dim: Tuple[int, int], edge_size: float, aspect_ratio: AspectRatio
-) -> Union[Tuple[int, int], None]:
+) -> Optional[Tuple[int, int]]:
     """Returns dimensions of new portrait image, based on provided edge size and aspect ratio
 
     Args:
@@ -38,7 +38,7 @@ def get_portrait_dimensions(
         asp_ratio (AspectRatio): New aspect ratio
 
     Returns:
-        Union[Tuple[int, int], None]: New dimensions if new aspect ratio is
+        Optional[Tuple[int, int]]: New dimensions if new aspect ratio is
         possible without cropping the original image, otherwise None
     """
     ratio = aspect_ratio.get_portrait()
@@ -50,7 +50,7 @@ def get_portrait_dimensions(
 
 def get_landscape_dimensions(
     old_dim: Tuple[int, int], edge_size: float, aspect_ratio: AspectRatio
-) -> Union[Tuple[int, int], None]:
+) -> Optional[Tuple[int, int]]:
     """Returns dimensions of new landscape image, based on provided edge size and aspect ratio
 
     Args:
@@ -59,7 +59,7 @@ def get_landscape_dimensions(
         asp_ratio (AspectRatio): New aspect ratio
 
     Returns:
-        Union[Tuple[int, int], None]: New dimensions if new aspect ratio is
+        Optional[Tuple[int, int]]: New dimensions if new aspect ratio is
         possible without cropping the original image, otherwise None
     """
     ratio = aspect_ratio.get_landscape()

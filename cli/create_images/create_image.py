@@ -18,7 +18,7 @@ def create_polaroid_images(
     Args:
         img_paths (List[Path]): List of file/directory path(s)
         edge_size (float): size of the thin edge as a percentage
-        aspect_ratio (AspectRatio): new image aspect ratio
+        aspect_ratio (Optional[AspectRatio]): new image aspect ratio
     """
     for img_path in img_paths:
         if img_path.is_file():
@@ -42,7 +42,7 @@ def generate_new_image(
     Args:
         path (Path): file paths to the image to be converted
         edge_size (float): size of the thin edge as a percentage
-        aspect_ratio (AspectRatio): new image aspect ratio
+        aspect_ratio (Optional[AspectRatio]): new image aspect ratio
     """
     try:
         # Using correct image orientation

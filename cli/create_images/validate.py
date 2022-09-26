@@ -11,8 +11,8 @@ def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
     """Parses command-line arguments
 
     Returns:
-        Tuple[List[str], float, AspectRatio]: Image paths, thin border sizing as
-        a percentage, desired aspect ratio
+        Tuple[List[str], float, Optional[AspectRatio]]: Image paths, thin border
+        sizing as a percentage, desired aspect ratio if equal borders are not specified
     """
     parser = ArgumentParser(allow_abbrev=False)
     parser.add_argument(
@@ -60,6 +60,11 @@ def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
 
 
 def add_equal_border_flag(parser: ArgumentParser) -> None:
+    """Adds equal border flag to the argument parser
+
+    Args:
+        parser (ArgumentParser): Argument parser used for command-line flags
+    """
     parser.add_argument(
         "-e",
         "--eq",

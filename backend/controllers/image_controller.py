@@ -1,6 +1,6 @@
 from io import BytesIO
 from PIL import Image, ImageOps, ImageCms, UnidentifiedImageError
-from typing import BinaryIO, Tuple, Union
+from typing import BinaryIO, Tuple, Optional
 from fastapi import HTTPException
 
 from common.exceptions import BAD_IMAGE, BAD_PARAMETERS, UNKNOWN_EXCEPTION
@@ -72,7 +72,7 @@ def generate_image(
 
 def validate_params(
     even_borders: bool, border_width_key: str, aspect_ratio_key: str
-) -> Tuple[float, Union[AspectRatio, None]]:
+) -> Tuple[float, Optional[AspectRatio]]:
     """validates the input params
 
     Args:
@@ -84,7 +84,7 @@ def validate_params(
         BAD_PARAMETERS: provided params are invalid
 
     Returns:
-        Tuple[float, Union[AspectRatio, None]]: border width percentage, target
+        Tuple[float, Optional[AspectRatio]]: border width percentage, target
         aspect ratio
     """
     if (border_width_key not in EDGE_MAP) or (

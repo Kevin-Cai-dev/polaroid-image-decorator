@@ -1,21 +1,21 @@
-from typing import Tuple, Union
+from typing import Tuple, Optional
 from models.aspect_ratio import AspectRatio
 
 
 def get_new_size(
     old_size: Tuple[int, int],
     border_width: float,
-    aspect_ratio: Union[AspectRatio, None],
-) -> Union[Tuple[int, int], None]:
+    aspect_ratio: Optional[AspectRatio],
+) -> Optional[Tuple[int, int]]:
     """calculates new image size based off image sizing params
 
     Args:
         old_size (Tuple[int, int]): original image size
         border_width (float): thin edge percentage sizing
-        aspect_ratio (Union[AspectRatio, None]): target aspect ratio
+        aspect_ratio (Optional[AspectRatio]): target aspect ratio
 
     Returns:
-        Union[Tuple[int, int], None]: new image size, or None if aspect ratio
+        Optional[Tuple[int, int]]: new image size, or None if aspect ratio
         cannot be achieved
     """
     # even borders
@@ -33,7 +33,7 @@ def get_new_portrait_size(
     old_size: Tuple[int, int],
     border_width: float,
     aspect_ratio: AspectRatio,
-) -> Union[Tuple[int, int], None]:
+) -> Optional[Tuple[int, int]]:
     """calculates new image size for portrait orientations
 
     Args:
@@ -42,7 +42,7 @@ def get_new_portrait_size(
         aspect_ratio (AspectRatio): target aspect ratio
 
     Returns:
-        Union[Tuple[int, int], None]: new image size, or None if aspect ratio
+        Optional[Tuple[int, int]]: new image size, or None if aspect ratio
         cannot be achieved
     """
     ratio = aspect_ratio.get_portrait()
@@ -58,7 +58,7 @@ def get_new_landscape_size(
     old_size: Tuple[int, int],
     border_width: float,
     aspect_ratio: AspectRatio,
-) -> Union[Tuple[int, int], None]:
+) -> Optional[Tuple[int, int]]:
     """calculates new image size for landsacape orientations
 
     Args:
@@ -67,7 +67,7 @@ def get_new_landscape_size(
         aspect_ratio (AspectRatio): target aspect ratio
 
     Returns:
-        Union[Tuple[int, int], None]: new image size, or None if aspect ratio
+        Optional[Tuple[int, int]]: new image size, or None if aspect ratio
         cannot be achieved
     """
     ratio = aspect_ratio.get_landscape()
