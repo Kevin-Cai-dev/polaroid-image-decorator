@@ -60,7 +60,7 @@ const Home: NextPage = () => {
         <div className="prose mx-auto flex min-h-screen max-w-screen-lg flex-col p-8 text-base-content">
             <GithubCorner />
             <h1 className="text-center font-sans font-bold">
-                Polaroid Image Generator
+                Polaroid Image Decorator
             </h1>
             <Disclaimer />
             <input
