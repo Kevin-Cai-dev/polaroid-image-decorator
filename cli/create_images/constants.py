@@ -12,6 +12,7 @@ JPEG = ".jpg"
 # flag keys
 IMAGE_PATHS = "image_paths"
 DISABLE_BORDERS = "disable_borders"
+EQUAL_BORDERS = "equal_borders"
 XS_BORDERS = "xs_borders"
 SM_BORDERS = "sm_borders"
 MD_BORDERS = "md_borders"
@@ -28,6 +29,7 @@ RATIO_KEYS = {RATIO_5_4, RATIO_3_2, RATIO_16_9}
 # flag help messages
 IMAGE_PATHS_HELP = "image paths or directory paths to images to be 'polaroidised'"
 DISABLE_BORDERS_HELP = "disable borders on the longer image dimension"
+EQUAL_BORDERS_HELP = "add equal sized borders to the image"
 XS_BORDERS_HELP = "add extra small borders on the longer image dimension"
 SM_BORDERS_HELP = "add small borders on the longer image dimension"
 MD_BORDERS_HELP = "add medium borders on the longer image dimension (default)"

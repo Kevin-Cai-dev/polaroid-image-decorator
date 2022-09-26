@@ -1,10 +1,10 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from create_images.aspect_ratio import AspectRatio
 
 
 def get_new_dimensions(
-    old_dim: Tuple[int, int], edge_size: float, aspect_ratio: AspectRatio
+    old_dim: Tuple[int, int], edge_size: float, aspect_ratio: Optional[AspectRatio]
 ) -> Union[Tuple[int, int], None]:
     """Returns dimensions of new image, based on provided edge size and aspect
     ratio. New dimensions match the original image orientation
@@ -18,6 +18,9 @@ def get_new_dimensions(
         Union[Tuple[int, int], None]: New dimensions if new aspect ratio is
         possible without cropping the original image, otherwise None
     """
+    if not aspect_ratio:
+        border_px = int(edge_size * max(old_dim[0], old_dim[1]))
+        return (old_dim[0] + border_px, old_dim[1] + border_px)
     if old_dim[1] > old_dim[0]:
         return get_portrait_dimensions(old_dim, edge_size, aspect_ratio)
     else:

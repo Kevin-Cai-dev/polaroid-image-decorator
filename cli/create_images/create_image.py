@@ -1,7 +1,7 @@
 import io
 from pathlib import Path, PurePath
 import sys
-from typing import List
+from typing import List, Optional
 
 from PIL import Image, ImageCms, ImageOps, UnidentifiedImageError
 
@@ -10,7 +10,7 @@ from create_images.aspect_ratio import AspectRatio
 
 
 def create_polaroid_images(
-    img_paths: List[Path], edge_size: float, aspect_ratio: AspectRatio
+    img_paths: List[Path], edge_size: float, aspect_ratio: Optional[AspectRatio]
 ) -> None:
     """Iterates over the given file/directory path(s) and aattempts to generate
     polaroid images
@@ -33,7 +33,9 @@ def create_polaroid_images(
             sys.exit(constants.INVALID_PATHS_PROVIDED)
 
 
-def generate_new_image(path: Path, edge_size: float, aspect_ratio: AspectRatio) -> None:
+def generate_new_image(
+    path: Path, edge_size: float, aspect_ratio: Optional[AspectRatio]
+) -> None:
     """Generates a new polaroid-esque image of the provided image and saves the
     file in the same location as the original. The original file is preserved.
 
