@@ -20,3 +20,14 @@ a polaroid-esque version, and download it
 
 **CLI**: The [original version](/cli/), a CLI program which allows image(s) to be
 converted and saved in the same location as the original
+
+## FAQ
+
+> **Is it tested?**
+
+:)
+
+> **The deployed frontend keeps failing, why is this happening?**
+
+Either some of the options specified cannot be used, or the backend is down
+since Heroku is making changes to their free plans :(
