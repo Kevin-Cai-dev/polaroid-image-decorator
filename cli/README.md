@@ -16,6 +16,9 @@ pip install -r requirements.txt
 python3 create_image.py [...flags] <...image_paths>
 ```
 
+To set a default directory/file path to use, add an environment variable called
+`POLAROID_PATH` which contains the default path.
+
 ## Examples
 
 Original Image

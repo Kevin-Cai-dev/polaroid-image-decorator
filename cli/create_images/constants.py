@@ -1,5 +1,8 @@
 from create_images.aspect_ratio import AspectRatio
 
+# env variable name
+POLAROID_PATH = "POLAROID_PATH"
+
 # error messages
 EQUAL_BORDERS_WITH_ASPECT_RATIO = (
     "equal borders flag cannot be provided with an aspect ratio flag"

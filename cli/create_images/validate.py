@@ -2,16 +2,10 @@ from argparse import ArgumentParser
 from pathlib import Path
 import sys
 from typing import List, Tuple, Optional
+import os
 
 from create_images import constants
 from create_images.aspect_ratio import AspectRatio
-
-
-def read_default_path() -> str:
-    fp = open(".img_path", "r")
-    path = fp.readline()
-    fp.close()
-    return path
 
 
 def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
@@ -22,12 +16,12 @@ def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
         sizing as a percentage, desired aspect ratio if equal borders are not specified
     """
 
-    default_path = read_default_path()
+    default_path = os.environ.get(constants.POLAROID_PATH, "")
 
     parser = ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         constants.IMAGE_PATHS,
-        default=default_path,
+        default=[default_path],
         type=str,
         nargs="+" if default_path == "" else "*",
         help=constants.IMAGE_PATHS_HELP,
