@@ -7,6 +7,13 @@ from create_images import constants
 from create_images.aspect_ratio import AspectRatio
 
 
+def read_default_path() -> str:
+    fp = open(".img_path", "r")
+    path = fp.readline()
+    fp.close()
+    return path
+
+
 def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
     """Parses command-line arguments
 
@@ -14,11 +21,15 @@ def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
         Tuple[List[str], float, Optional[AspectRatio]]: Image paths, thin border
         sizing as a percentage, desired aspect ratio if equal borders are not specified
     """
+
+    default_path = read_default_path()
+
     parser = ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         constants.IMAGE_PATHS,
+        default=default_path,
         type=str,
-        nargs="+",
+        nargs="+" if default_path == "" else "*",
         help=constants.IMAGE_PATHS_HELP,
     )
     add_equal_border_flag(parser)
