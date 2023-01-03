@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 
-import { createImage } from '@common/utils';
+import { createImage, healthCheck } from '@common/utils';
 import { Disclaimer } from '@components/disclaimer';
 import { ErrorAlert } from '@components/error-alert';
 import { Footer } from '@components/footer';
@@ -9,6 +9,7 @@ import { GithubCorner } from '@components/github-corner';
 import { Settings } from '@components/settings';
 
 const Home: NextPage = () => {
+    const [isDown, setIsDown] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File>();
     const [newImage, setNewImage] = useState<string>();
     const [evenBorder, setEvenBorder] = useState(false);
@@ -18,6 +19,17 @@ const Home: NextPage = () => {
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const hiddenFileInput = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const pingBackend = async () => {
+            const status = await healthCheck();
+            if (status !== 200) {
+                setIsDown(true);
+            }
+        };
+
+        pingBackend();
+    }, []);
 
     const settingsProps = {
         evenBorder,
@@ -63,6 +75,9 @@ const Home: NextPage = () => {
                 Polaroid Image Decorator
             </h1>
             <Disclaimer />
+            {isDown && (
+                <ErrorAlert error="Page is disabled as the backend is currently down. This is most likely because it is no longer being hosted." />
+            )}
             <input
                 type="file"
                 name="image-upload"
@@ -70,9 +85,14 @@ const Home: NextPage = () => {
                 ref={hiddenFileInput}
                 className="hidden"
                 onChange={handleUpload}
+                disabled={isDown}
             />
             <div>
-                <button className="btn btn-primary" onClick={onFileClick}>
+                <button
+                    className="btn btn-primary"
+                    onClick={onFileClick}
+                    disabled={isDown}
+                >
                     Upload image
                 </button>
                 <span className="pl-4">
@@ -87,7 +107,7 @@ const Home: NextPage = () => {
                 <button
                     className="btn btn-secondary"
                     onClick={getImage}
-                    disabled={!selectedFile}
+                    disabled={!selectedFile || isDown}
                 >
                     Generate!
                 </button>
