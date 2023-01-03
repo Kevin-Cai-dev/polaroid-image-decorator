@@ -62,7 +62,6 @@ def generate_new_image(
         new_image = create_new_image(old_image, old_size, new_size)
 
         if input_args[constants.INSTA_OPTIMISED]:
-            print("optimising")
             new_image = insta_resize_image(new_image)
 
         # Saving new image in same location as original
