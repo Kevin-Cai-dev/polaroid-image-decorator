@@ -1,7 +1,8 @@
 # polaroid-image-decorator-backend
 
 Backend for the polaroid image generator web app. This is based on `FastAPI` and
-uses the python `Pillow` library for image processing.
+uses the python `Pillow` library for image processing. Generated images are
+always of `.jpeg` format.
 
 ## Setup
 
