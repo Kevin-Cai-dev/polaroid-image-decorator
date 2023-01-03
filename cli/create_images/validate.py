@@ -1,24 +1,26 @@
 from argparse import ArgumentParser
+import os
 from pathlib import Path
 import sys
-from typing import List, Tuple, Optional
-import os
+from typing import Any, Dict, List, Optional, Tuple
+
 
 from create_images import constants
 from create_images.aspect_ratio import AspectRatio
 
 
-def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
+def parse_args() -> Tuple[List[str], Dict[float, Optional[AspectRatio]]]:
     """Parses command-line arguments
 
     Returns:
-        Tuple[List[str], float, Optional[AspectRatio]]: Image paths, thin border
-        sizing as a percentage, desired aspect ratio if equal borders are not specified
+        Tuple[List[str], Dict[float, Optional[AspectRatio]]]: Image paths, image
+        sizing arguments
     """
 
     default_path = os.environ.get(constants.POLAROID_PATH, "")
 
     parser = ArgumentParser(allow_abbrev=False)
+
     parser.add_argument(
         constants.IMAGE_PATHS,
         default=[default_path],
@@ -26,42 +28,25 @@ def parse_args() -> Tuple[List[str], float, Optional[AspectRatio]]:
         nargs="+" if default_path == "" else "*",
         help=constants.IMAGE_PATHS_HELP,
     )
+
     add_equal_border_flag(parser)
     add_edge_size_flags(parser)
     add_aspect_ratio_flags(parser)
+    add_instagram_optimised_flag(parser)
 
     args = vars(parser.parse_args())
-    edge_size = None
-    aspect_ratio = None
 
-    even_borders = True if args[constants.EQUAL_BORDERS] else False
+    edge_size, aspect_ratio = sanitize_input_args(parser, args)
 
-    for key in args:
-        if key in constants.EDGE_KEYS and args[key]:
-            edge_size = (
-                constants.EDGE_MAP[key]
-                if edge_size is None
-                else parser.error(constants.TOO_MANY_SIZE_FLAGS)
-            )
-        if key in constants.RATIO_KEYS and args[key]:
-            if even_borders:
-                parser.error(constants.EQUAL_BORDERS_WITH_ASPECT_RATIO)
-            aspect_ratio = (
-                constants.ASPECT_RATIO_MAP[key]
-                if aspect_ratio is None
-                else parser.error(constants.TOO_MANY_ASPECT_RATIO_FLAGS)
-            )
-
-    if not aspect_ratio and not even_borders:
-        aspect_ratio = constants.ASPECT_RATIO_MAP[constants.RATIO_1_1]
-
-    return (
-        args[constants.IMAGE_PATHS],
-        edge_size
+    input_args = {
+        constants.EDGE_SIZE: edge_size
         if edge_size is not None
         else constants.EDGE_MAP[constants.MD_BORDERS],
-        aspect_ratio,
-    )
+        constants.ASPECT_RATIO: aspect_ratio,
+        constants.INSTA_OPTIMISED: args[constants.INSTA_OPTIMISED],
+    }
+
+    return (args[constants.IMAGE_PATHS], input_args)
 
 
 def add_equal_border_flag(parser: ArgumentParser) -> None:
@@ -71,11 +56,28 @@ def add_equal_border_flag(parser: ArgumentParser) -> None:
         parser (ArgumentParser): Argument parser used for command-line flags
     """
     parser.add_argument(
-        "-e",
+        "--e",
         "--eq",
         action="store_true",
         help=constants.EQUAL_BORDERS_HELP,
         dest=constants.EQUAL_BORDERS,
+    )
+
+
+def add_instagram_optimised_flag(parser: ArgumentParser) -> None:
+    """Adds instagram sizing optimisation flag to the argument parser
+
+    Args:
+        parser (ArgumentParser): Argument parser used for command-line flags
+    """
+    parser.add_argument(
+        "--ig",
+        "--insta",
+        "--instagram",
+        action="store_true",
+        help=constants.INSTA_OPTIMISED_HELP,
+        dest=constants.INSTA_OPTIMISED,
+        default=False,
     )
 
 
@@ -156,6 +158,45 @@ def add_aspect_ratio_flags(parser: ArgumentParser) -> None:
         help=constants.RATIO_16_9_HELP,
         dest=constants.RATIO_16_9,
     )
+
+
+def sanitize_input_args(
+    parser: ArgumentParser, args: Dict[str, Any]
+) -> Tuple[float, Optional[AspectRatio]]:
+    """Processes input flags and returns usable values for image processing
+
+    Args:
+        parser (ArgumentParser): Argument parser used for command-line flags
+        args (Dict[str, Any]): Parser arguments in dictionary form
+
+    Returns:
+        Tuple[float, Optional[AspectRatio]]: Usable edge_size and aspect_ratio values
+    """
+    edge_size = None
+    aspect_ratio = None
+
+    even_borders = True if args[constants.EQUAL_BORDERS] else False
+
+    for key in args:
+        if key in constants.EDGE_MAP and args[key]:
+            edge_size = (
+                constants.EDGE_MAP[key]
+                if edge_size is None
+                else parser.error(constants.TOO_MANY_SIZE_FLAGS)
+            )
+        if key in constants.ASPECT_RATIO_MAP and args[key]:
+            if even_borders:
+                parser.error(constants.EQUAL_BORDERS_WITH_ASPECT_RATIO)
+            aspect_ratio = (
+                constants.ASPECT_RATIO_MAP[key]
+                if aspect_ratio is None
+                else parser.error(constants.TOO_MANY_ASPECT_RATIO_FLAGS)
+            )
+
+    if not aspect_ratio and not even_borders:
+        aspect_ratio = constants.ASPECT_RATIO_MAP[constants.RATIO_1_1]
+
+    return edge_size, aspect_ratio
 
 
 def validate_paths(img_paths: List[str]) -> List[Path]:

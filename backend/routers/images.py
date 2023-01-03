@@ -1,4 +1,3 @@
-from io import BytesIO
 from fastapi import APIRouter, UploadFile, Form, Response
 from controllers.image_controller import generate_image
 

@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 from create_images.aspect_ratio import AspectRatio
 
@@ -67,3 +67,23 @@ def get_landscape_dimensions(
         return None
     new_dimension = int((1 + edge_size) * max(old_dim[0], old_dim[1]))
     return (new_dimension, int(new_dimension / ratio[0] * ratio[1]))
+
+
+def get_instagram_dimensions(dim: Tuple[int, int]) -> Tuple[int, int]:
+    """Calculates new image dimensions optimised for instagram
+
+    Args:
+        dim (Tuple[int, int]): Image dimensions
+
+    Returns:
+        Tuple[int, int]: Instagram optimised dimensions
+    """
+    max_dimension = 1080
+    if dim[1] > dim[0]:
+        max_dimension = 1350
+
+    if max(dim[0], dim[1]) < max_dimension:
+        return dim
+
+    scale_factor = max(dim[0], dim[1]) / max_dimension
+    return (int(dim[0] / scale_factor), int(dim[1] / scale_factor))
