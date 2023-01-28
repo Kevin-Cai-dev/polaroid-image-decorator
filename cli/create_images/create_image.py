@@ -1,11 +1,12 @@
 from pathlib import Path, PurePath
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from create_images import constants, resize
 from create_images.aspect_ratio import AspectRatio
+from create_images.image_data import JPEGImageData
 
 
 def create_polaroid_images(
@@ -46,7 +47,7 @@ def generate_new_image(
         old_image = ImageOps.exif_transpose(Image.open(str(path)))
         old_size = old_image.size
 
-        original_colour_profile = old_image.info.get("icc_profile")
+        old_image_data = store_old_image_data(old_image)
 
         # Get new image dimensions
         new_size = resize.get_new_dimensions(
@@ -65,12 +66,28 @@ def generate_new_image(
             new_image = insta_resize_image(new_image)
 
         # Saving new image in same location as original
-        save_image(path, new_image, original_colour_profile)
-    except (UnidentifiedImageError):
+        save_image(path, new_image, old_image_data)
+    except UnidentifiedImageError:
         pass
     except BaseException as err:
         print(f"Unexpected {err=}, {type(err)=}")
         raise
+
+
+def store_old_image_data(old_image: Image) -> JPEGImageData:
+    """Retains original image metadata to copy when generating new polaroid image
+
+    Args:
+        old_image (Image): Original image
+
+    Returns:
+        JPEGImageData: Stored image metadata
+    """
+    return JPEGImageData(
+        old_image.info.get("dpi"),
+        old_image.info.get("exif"),
+        old_image.info.get("icc_profile"),
+    )
 
 
 def create_new_image(
@@ -105,7 +122,7 @@ def insta_resize_image(image: Image) -> Image:
     return image.resize(insta_size)
 
 
-def save_image(path: Path, image: Image, icc_profile: Optional[Any]) -> None:
+def save_image(path: Path, image: Image, old_image_data: JPEGImageData) -> None:
     """Function to save the newly generated image
 
     Args:
@@ -120,7 +137,9 @@ def save_image(path: Path, image: Image, icc_profile: Optional[Any]) -> None:
     image.save(
         str(new_file_path),
         format="JPEG",
-        quality=95,
-        dpi=(300, 300),
-        icc_profile=icc_profile,
+        quality=100,
+        subsampling=0,
+        dpi=old_image_data.get_dpi(),
+        exif=old_image_data.get_exif(),
+        icc_profile=old_image_data.get_icc_profile(),
     )
